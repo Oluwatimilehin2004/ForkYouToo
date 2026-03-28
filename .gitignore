@@ -1,38 +1,15 @@
-# Environment
-.env
-*.env
-
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.pyc
-env/
-venv/
-.venv/
-*.egg-info/
-dist/
-build/
-
-# Django
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-media/
-staticfiles/
+# OS
+.DS_Store
+Thumbs.db
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-.DS_Store
 
-# Node (if any frontend tooling)
+# Logs
+*.log
+
+# If you ever add a build tool
 node_modules/
-npm-debug.log
-
-# Docker
-*.dockerignore
+dist/
+.parcel-cache/
