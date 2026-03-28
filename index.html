@@ -426,6 +426,21 @@
       color: var(--yellow);
     }
 
+    .sort-tag {
+      padding: 6px 16px;
+      border: var(--border);
+      background: white;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .sort-tag.active {
+      background: var(--black);
+      color: var(--yellow);
+    }
+
     .repos-section {
       padding: 32px;
       min-height: 400px;
@@ -682,6 +697,12 @@
       <button class="filter-tag" data-language="TypeScript">TypeScript</button>
       <button class="filter-tag" data-language="Rust">Rust</button>
     </div>
+    <div class="filter-group" style="margin-top: 12px;">
+      <span class="filter-label">Sort by:</span>
+      <button class="sort-tag active" data-sort="recent">Most Recent</button>
+      <button class="sort-tag" data-sort="stars">⭐ Stars</button>
+      <button class="sort-tag" data-sort="forks">🍴 Forks</button>
+    </div>
   </div>
 
   <div class="repos-section">
@@ -708,9 +729,11 @@
     let isFetching = false;      // prevents duplicate in-flight requests
     let currentLanguage = "all";
     let currentSearch = "";
+    let currentSort = "recent";  // recent | stars | forks
     let observer = null;
     let totalStarsAll = 0;
     let allLanguages = new Set();
+    let searchDebounceTimer = null;
 
     // ── Auth ───────────────────────────────────────────────
     function checkAuth() {
@@ -836,7 +859,7 @@
       }
 
       try {
-        const res = await fetch(`${API_URL}?page=${page}&per_page=20`, {
+        const res = await fetch(`${API_URL}?page=${page}&per_page=20&sort=${currentSort}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -1007,15 +1030,39 @@
       });
     }
 
+    function setupSort() {
+      document.querySelectorAll('.sort-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+          if (tag.dataset.sort === currentSort) return;
+          document.querySelectorAll('.sort-tag').forEach(t => t.classList.remove('active'));
+          tag.classList.add('active');
+          currentSort = tag.dataset.sort;
+          // Sort changes the server query — reset and refetch from page 1
+          resetAndFetch();
+        });
+      });
+    }
+
     function setupSearch() {
       const input = document.getElementById('searchInput');
       const btn = document.getElementById('searchBtn');
+
       const perform = () => {
         currentSearch = input.value.trim();
         applyFilters();
       };
+
       btn.addEventListener('click', perform);
       input.addEventListener('keypress', e => e.key === 'Enter' && perform());
+
+      // Live debounced search — fires 400ms after user stops typing
+      input.addEventListener('input', () => {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+          currentSearch = input.value.trim();
+          applyFilters();
+        }, 400);
+      });
     }
 
     function setupDropdown() {
@@ -1032,6 +1079,7 @@
     document.getElementById('importsItem').addEventListener('click', () => viewImports());
     document.getElementById('connectGithubItem').addEventListener('click', () => openGithubModal());
     setupFilters();
+    setupSort();
     setupSearch();
 
     // Kick off — fetches only the first 20 repos immediately
