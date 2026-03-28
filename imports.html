@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="./favicon-32x32.png">
+  <title>ForkYouToo — My Imports</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream: #F5F0E8;
+      --black: #1A1A1A;
+      --yellow: #F5C842;
+      --green: #B8F5C8;
+      --red: #FF6B6B;
+      --blue: #C8E6FF;
+      --border: 2px solid var(--black);
+      --shadow: 4px 4px 0 var(--black);
+      --shadow-sm: 2px 2px 0 var(--black);
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: var(--cream);
+      border-bottom: var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: var(--border);
+      padding: 8px 16px;
+      background: white;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--black);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .back-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--black);
+      padding: 40px 32px;
+      border-bottom: var(--border);
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .hero-left {}
+
+    .hero-tag {
+      display: inline-block;
+      background: var(--yellow);
+      border: var(--border);
+      border-color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      background: var(--yellow);
+      color: var(--black);
+      padding: 0 6px;
+    }
+
+    .hero p {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .hero-stat {
+      background: #222;
+      border: 1px solid #444;
+      padding: 16px 28px;
+      text-align: center;
+    }
+
+    .hero-stat-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--yellow);
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 10px;
+      color: #888;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── Main content ── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    /* ── States ── */
+    .state-loading, .state-empty, .state-error {
+      text-align: center;
+      padding: 80px 32px;
+      display: none;
+    }
+
+    .state-loading.show, .state-empty.show, .state-error.show {
+      display: block;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--black);
+      border-top-color: var(--yellow);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .state-empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .state-empty h2 {
+      font-family: 'Space Mono', monospace;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .state-empty p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      padding: 12px 28px;
+      background: var(--black);
+      color: var(--yellow);
+      border: var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .cta-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow);
+    }
+
+    /* ── Imports grid ── */
+    .imports-grid {
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 20px;
+    }
+
+    .imports-grid.show {
+      display: grid;
+    }
+
+    /* ── Import card ── */
+    .import-card {
+      background: white;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      animation: fadeInUp 0.3s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .import-card:hover {
+      transform: translate(-2px, -2px);
+    }
+
+    /* Staggered animation */
+    .import-card:nth-child(1)  { animation-delay: 0.05s; }
+    .import-card:nth-child(2)  { animation-delay: 0.10s; }
+    .import-card:nth-child(3)  { animation-delay: 0.15s; }
+    .import-card:nth-child(4)  { animation-delay: 0.20s; }
+    .import-card:nth-child(5)  { animation-delay: 0.25s; }
+    .import-card:nth-child(6)  { animation-delay: 0.30s; }
+
+    .card-top {
+      padding: 20px;
+      border-bottom: var(--border);
+      background: var(--cream);
+    }
+
+    .card-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #888;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .card-repo-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      word-break: break-word;
+      margin-bottom: 4px;
+    }
+
+    .card-original {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .card-original span {
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .card-body {
+      padding: 16px 20px;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border: var(--border);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge.success { background: var(--green); }
+    .badge.failed  { background: #ffe5e5; color: var(--red); }
+    .badge.pending { background: var(--yellow); }
+
+    .card-date {
+      font-size: 11px;
+      color: #888;
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* Customizations applied tags */
+    .custom-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+      min-height: 28px;
+    }
+
+    .custom-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border: 1px solid #ccc;
+      background: var(--cream);
+      color: #555;
+      text-transform: lowercase;
+    }
+
+    /* Action buttons */
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-view-github {
+      flex: 1;
+      height: 40px;
+      border: var(--border);
+      background: var(--black);
+      color: var(--yellow);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn-view-github:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-view-original {
+      height: 40px;
+      padding: 0 16px;
+      border: var(--border);
+      background: var(--cream);
+      color: var(--black);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn-view-original:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ── Section header ── */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .repo-count {
+      border: var(--border);
+      padding: 4px 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--yellow);
+    }
+
+    /* ── Toast notification ── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: var(--black);
+      color: var(--yellow);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 14px 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .topbar, .main { padding: 16px; }
+      .hero { padding: 28px 16px; }
+      .hero h1 { font-size: 22px; }
+      .imports-grid { grid-template-columns: 1fr; }
+      .hero-content { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <a class="logo" href="index.html">
+      <img src="./3D TEXT.jpg" alt="logo" width="40">
+      <span>ForkYouToo</span>
+    </a>
+    <a class="back-btn" href="index.html">← Back to Explorer</a>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-tag">My Activity</div>
+        <h1>Your <em>imported</em> repos.</h1>
+        <p>Every repository you've forked and customized lives here.</p>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number" id="totalImports">--</div>
+        <div class="hero-stat-label">Total Imports</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <div class="section-header">
+      <div class="section-title">Imported Repositories</div>
+      <div class="repo-count" id="repoCount">0 repos</div>
+    </div>
+
+    <!-- Loading -->
+    <div class="state-loading show" id="stateLoading">
+      <div class="spinner"></div>
+      <p>Fetching your imports...</p>
+    </div>
+
+    <!-- Empty -->
+    <div class="state-empty" id="stateEmpty">
+      <div class="state-empty-icon">📭</div>
+      <h2>No imports yet</h2>
+      <p>You haven't imported any repositories. Head back to the explorer and fork something interesting.</p>
+      <a class="cta-btn" href="index.html">Browse Repos →</a>
+    </div>
+
+    <!-- Error -->
+    <div class="state-error" id="stateError">
+      <div class="state-empty-icon">⚠️</div>
+      <h2>Failed to load</h2>
+      <p id="errorMsg">Something went wrong. Please try again.</p>
+      <button class="cta-btn" onclick="loadImports()">Retry</button>
+    </div>
+
+    <!-- Imports grid -->
+    <div class="imports-grid" id="importsGrid"></div>
+
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const MY_IMPORTS_URL = 'http://127.0.0.1:8000/api/imports/';
+
+    function checkAuth() {
+      if (!localStorage.getItem('access_token')) {
+        window.location.href = 'login.html';
+      }
+    }
+
+    function showState(name) {
+      ['stateLoading', 'stateEmpty', 'stateError', 'importsGrid'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('show');
+      });
+      document.getElementById(name).classList.add('show');
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function formatCustomizations(list) {
+      if (!list || list.length === 0) return '<span style="color:#aaa;font-size:11px;">No customizations</span>';
+      const labels = {
+        'README.md': '📄 README renamed',
+        'settings.py': '⚙️ settings.py renamed',
+        'attribution_note': '🔗 attribution added',
+      };
+      return list.map(c => `<span class="custom-tag">${labels[c] || c}</span>`).join('');
+    }
+
+    function buildCard(imp) {
+      const statusClass = imp.status === 'success' ? 'success' : imp.status === 'failed' ? 'failed' : 'pending';
+      const statusIcon  = imp.status === 'success' ? '✓' : imp.status === 'failed' ? '✗' : '…';
+      const originalUrl = `https://github.com/${imp.original_repo}`;
+
+      return `
+        <div class="import-card">
+          <div class="card-top">
+            <div class="card-label">Imported repo</div>
+            <div class="card-repo-name">${escapeHtml(imp.imported_repo_name)}</div>
+            <div class="card-original">Forked from <span>${escapeHtml(imp.original_repo)}</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="badge ${statusClass}">${statusIcon} ${imp.status}</span>
+              <span class="card-date">${formatDate(imp.created_at)}</span>
+            </div>
+            <div class="custom-tags">${formatCustomizations(imp.customizations)}</div>
+            <div class="card-actions">
+              <a class="btn-view-github" href="${escapeHtml(imp.imported_repo_url)}" target="_blank" rel="noopener">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                View on GitHub
+              </a>
+              <a class="btn-view-original" href="${escapeHtml(originalUrl)}" target="_blank" rel="noopener" title="View original repo">
+                Original →
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadImports() {
+      showState('stateLoading');
+      const token = localStorage.getItem('access_token');
+
+      try {
+        const res = await fetch(MY_IMPORTS_URL, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+          localStorage.clear();
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const data = await res.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to fetch imports');
+        }
+
+        const imports = data.imports || [];
+
+        document.getElementById('totalImports').textContent = imports.length;
+        document.getElementById('repoCount').textContent = `${imports.length} repo${imports.length !== 1 ? 's' : ''}`;
+
+        if (imports.length === 0) {
+          showState('stateEmpty');
+          return;
+        }
+
+        const grid = document.getElementById('importsGrid');
+        grid.innerHTML = imports.map(buildCard).join('');
+        showState('importsGrid');
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('errorMsg').textContent = err.message || 'Something went wrong. Please try again.';
+        showState('stateError');
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    checkAuth();
+    loadImports();
+  </script>
+</body>
+</html>

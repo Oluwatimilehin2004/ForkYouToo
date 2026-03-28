@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="./favicon-32x32.png">
+  <title>ForkYouToo — Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cream: #F5F0E8;
+      --black: #1A1A1A;
+      --yellow: #F5C842;
+      --green: #B8F5C8;
+      --red: #FF6B6B;
+      --border: 2px solid var(--black);
+      --shadow: 4px 4px 0 var(--black);
+      --shadow-lg: 6px 6px 0 var(--black);
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+    }
+
+    /* Top Bar */
+    .topbar {
+      background: var(--cream);
+      border-bottom: var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+      cursor: pointer;
+    }
+
+    .logo-box {
+      width: 38px;
+      height: 38px;
+      background: var(--yellow);
+      border: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .login-link {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .login-link a {
+      color: var(--black);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* Main Container */
+    .signup-container {
+      max-width: 1000px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    .signup-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .signup-header h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .signup-header p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Form Card */
+    .form-card {
+      background: white;
+      border: var(--border);
+      box-shadow: var(--shadow-lg);
+      padding: 40px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* Profile Picture Upload */
+    .profile-upload {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: var(--border);
+    }
+
+    .avatar-preview {
+      width: 80px;
+      height: 80px;
+      border: var(--border);
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.1s;
+    }
+
+    .avatar-preview:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #888;
+    }
+
+    .avatar-placeholder span {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .upload-info {
+      flex: 1;
+    }
+
+    .upload-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .upload-hint {
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 8px;
+    }
+
+    .upload-btn {
+      padding: 5px 12px;
+      border: var(--border);
+      background: var(--yellow);
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .upload-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Form Fields */
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    .field-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      display: block;
+      margin-bottom: 8px;
+      color: var(--black);
+    }
+
+    .field-label span {
+      font-weight: 400;
+      color: #888;
+      text-transform: none;
+    }
+
+    .field-input {
+      width: 100%;
+      height: 48px;
+      border: var(--border);
+      background: var(--cream);
+      padding: 0 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--black);
+      outline: none;
+      transition: box-shadow 0.15s;
+    }
+
+    .field-input:focus {
+      box-shadow: var(--shadow);
+      background: white;
+    }
+
+    .field-input.error {
+      border-color: var(--red);
+      background: #fff5f5;
+    }
+
+    .field-error {
+      font-size: 11px;
+      color: var(--red);
+      font-weight: 700;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .field-error.visible {
+      display: block;
+    }
+
+    /* Two column row */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .field-row .field-group {
+      margin-bottom: 0;
+    }
+
+    /* Password with strength */
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap .field-input {
+      padding-right: 48px;
+    }
+
+    .pw-toggle {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-left: var(--border);
+      background: var(--cream);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pw-toggle:hover {
+      background: var(--yellow);
+    }
+
+    .pw-strength {
+      height: 4px;
+      border: 1px solid #ddd;
+      background: #eee;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .pw-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--black);
+      transition: width 0.2s;
+    }
+
+    /* Bio textarea */
+    .field-textarea {
+      height: auto;
+      padding: 12px 16px;
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .char-count {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: #aaa;
+      text-align: right;
+      margin-top: 6px;
+    }
+
+    /* ALU Note */
+    .alu-note {
+      background: var(--yellow);
+      border: var(--border);
+      padding: 14px 16px;
+      font-size: 12px;
+      margin: 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      height: 52px;
+      background: var(--black);
+      border: var(--border);
+      color: var(--yellow);
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .submit-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #444;
+      border-top-color: var(--yellow);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .success-msg {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--green);
+      border: var(--border);
+      padding: 14px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a4a27;
+      margin-top: 20px;
+    }
+
+    .error-msg {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffe5e5;
+      border: var(--border);
+      border-color: var(--red);
+      padding: 14px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      margin-top: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .field-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .form-card {
+        padding: 28px;
+      }
+      .signup-header h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo" onclick="window.location.href='index.html'">
+      <img src="./3D TEXT.jpg" alt="logo" width="40">
+      <span>ForkYouToo</span>
+    </div>
+    <div class="login-link">
+      Already have an account? <a href="login.html">Sign in →</a>
+    </div>
+  </div>
+
+  <div class="signup-container">
+    <div class="signup-header">
+      <h1>Join ForkYouToo</h1>
+      <p>Connect with ALU students and discover real GitHub projects</p>
+    </div>
+
+    <div class="form-card">
+      <form id="signupForm" enctype="multipart/form-data">
+        <!-- Profile Picture Upload -->
+        <div class="profile-upload">
+          <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('profilePic').click()">
+            <div class="avatar-placeholder" id="avatarPlaceholder">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <span>Photo</span>
+            </div>
+            <img id="avatarImg" src="" alt="" style="display: none;">
+          </div>
+          <div class="upload-info">
+            <div class="upload-title">Profile picture</div>
+            <div class="upload-hint">JPG or PNG. Optional.</div>
+            <button type="button" class="upload-btn" onclick="document.getElementById('profilePic').click()">Choose file</button>
+          </div>
+          <input type="file" id="profilePic" name="profile_pic" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label" for="username">Username *</label>
+            <input class="field-input" type="text" id="username" name="username" placeholder="e.g. amara-kone">
+            <span class="field-error" id="err-username"></span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="email">Email * <span>(ALU only)</span></label>
+            <input class="field-input" type="email" id="email" name="email" placeholder="you@alustudent.com">
+            <span class="field-error" id="err-email"></span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="password">Password *</label>
+          <div class="password-wrap">
+            <input class="field-input" type="password" id="password" name="password" placeholder="At least 8 characters">
+            <button type="button" class="pw-toggle" id="pwToggle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pw-strength"><div class="pw-bar" id="pwBar"></div></div>
+          <span class="field-error" id="err-password"></span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="bio">Bio <span>optional</span></label>
+          <textarea class="field-input field-textarea" id="bio" name="bio" placeholder="e.g. ALU Software Engineering student, Cohort 2023. Love Python and Django." rows="3" maxlength="200"></textarea>
+          <div class="char-count" id="charCount">0 / 200</div>
+        </div>
+
+        <div class="alu-note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Only <strong>@alustudent.com</strong> and <strong>@alueducation.com</strong> emails are accepted
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span id="btnText">Create account</span>
+          <div class="btn-spinner" id="btnSpinner" style="display: none;"></div>
+        </button>
+
+        <div id="apiResponse" style="display: none;"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // API Endpoint
+    const API_REGISTER_URL = 'http://127.0.0.1:8000/api/register/';
+
+    // Profile picture preview
+    const profilePicInput = document.getElementById('profilePic');
+    const avatarImg = document.getElementById('avatarImg');
+    const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+
+    profilePicInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          avatarImg.src = event.target.result;
+          avatarImg.style.display = 'block';
+          avatarPlaceholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        avatarImg.style.display = 'none';
+        avatarPlaceholder.style.display = 'flex';
+      }
+    });
+
+    // Password toggle
+    const pwInput = document.getElementById('password');
+    const pwToggle = document.getElementById('pwToggle');
+    let pwVisible = false;
+
+    pwToggle.addEventListener('click', () => {
+      pwVisible = !pwVisible;
+      pwInput.type = pwVisible ? 'text' : 'password';
+      pwToggle.innerHTML = pwVisible ? 
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>' :
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    });
+
+    // Password strength
+    pwInput.addEventListener('input', function() {
+      let score = 0;
+      if (this.value.length >= 8) score++;
+      if (/[A-Z]/.test(this.value)) score++;
+      if (/[0-9]/.test(this.value)) score++;
+      if (/[^A-Za-z0-9]/.test(this.value)) score++;
+      const widths = ['0%', '25%', '50%', '75%', '100%'];
+      const colors = ['#ccc', '#FF6B6B', '#F5C842', '#90EE90', '#2ECC71'];
+      document.getElementById('pwBar').style.width = widths[score];
+      document.getElementById('pwBar').style.background = colors[score];
+    });
+
+    // Bio char count
+    const bioInput = document.getElementById('bio');
+    const charCount = document.getElementById('charCount');
+    bioInput.addEventListener('input', () => {
+      charCount.textContent = `${bioInput.value.length} / 200`;
+    });
+
+    // Validation helpers
+    function showError(fieldId, msg) {
+      const input = document.getElementById(fieldId);
+      const err = document.getElementById(`err-${fieldId}`);
+      if (input) input.classList.add('error');
+      if (err) {
+        err.textContent = msg;
+        err.classList.add('visible');
+      }
+    }
+
+    function clearError(fieldId) {
+      const input = document.getElementById(fieldId);
+      const err = document.getElementById(`err-${fieldId}`);
+      if (input) input.classList.remove('error');
+      if (err) err.classList.remove('visible');
+    }
+
+    function clearAllErrors() {
+      ['username', 'email', 'password'].forEach(clearError);
+    }
+
+    // Show API response message
+    function showMessage(message, isError = false) {
+      const responseDiv = document.getElementById('apiResponse');
+      responseDiv.style.display = 'block';
+      responseDiv.className = isError ? 'error-msg' : 'success-msg';
+      responseDiv.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          ${isError ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' : '<polyline points="20 6 9 17 4 12"/>'}
+        </svg>
+        ${message}
+      `;
+      
+      if (isError) {
+        setTimeout(() => {
+          responseDiv.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    // Form submit with FormData (for file upload)
+    const form = document.getElementById('signupForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const bio = document.getElementById('bio').value.trim();
+      const profilePic = document.getElementById('profilePic').files[0];
+
+      // Clear previous errors and messages
+      clearAllErrors();
+      const responseDiv = document.getElementById('apiResponse');
+      responseDiv.style.display = 'none';
+
+      // --- FRONTEND VALIDATION ---
+      let valid = true;
+
+      if (username.length < 3) {
+        showError('username', 'Username must be at least 3 characters');
+        valid = false;
+      } else if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+        showError('username', 'Only letters, numbers, hyphens and underscores');
+        valid = false;
+      }
+
+      const aluDomains = ['@alustudent.com', '@alueducation.com'];
+      if (!email || !aluDomains.some(d => email.toLowerCase().endsWith(d))) {
+        showError('email', 'Must use @alustudent.com or @alueducation.com');
+        valid = false;
+      }
+
+      if (password.length < 8) {
+        showError('password', 'Password must be at least 8 characters');
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      // --- Prepare FormData for multipart/form-data ---
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('email', email);
+      formData.append('password', password);
+      if (bio) formData.append('bio', bio);
+      if (profilePic) formData.append('profile_pic', profilePic);
+
+      // --- API CALL ---
+      submitBtn.disabled = true;
+      btnText.style.display = 'none';
+      btnSpinner.style.display = 'block';
+
+      try {
+        console.log('Sending registration data via FormData...');
+        
+        // Make the POST request - DO NOT set Content-Type header, browser will set it with boundary
+        const response = await fetch(API_REGISTER_URL, {
+          method: 'POST',
+          body: formData
+        });
+
+        // Parse the response
+        const data = await response.json();
+
+        console.log('Server response:', data);
+
+        if (response.ok) {
+          // Registration successful
+          // Store user info in localStorage (optional)
+          localStorage.setItem('user_email', email);
+          localStorage.setItem('user_name', username);
+          
+          // Show success message
+          showMessage('Account created successfully! Redirecting to dashboard...', false);
+          
+          // Disable form
+          form.style.opacity = '0.6';
+          form.style.pointerEvents = 'none';
+          
+          // Redirect to homepage after 1.5 seconds
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+          
+        } else {
+          // Registration failed - handle errors from your backend
+          let errorMessage = data.error || 'Registration failed. Please try again.';
+          showMessage(errorMessage, true);
+        }
+        
+      } catch (error) {
+        // Network or other error
+        console.error('Registration error:', error);
+        showMessage('Network error. Please check your connection and try again.', true);
+        
+      } finally {
+        // Re-enable the submit button
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnSpinner.style.display = 'none';
+      }
+    });
+
+    // Live blur validation
+    document.getElementById('username').addEventListener('blur', function() {
+      if (this.value.length >= 3) clearError('username');
+    });
+    
+    document.getElementById('email').addEventListener('blur', function() {
+      const email = this.value;
+      if (email && (email.endsWith('@alustudent.com') || email.endsWith('@alueducation.com'))) {
+        clearError('email');
+      }
+    });
+    
+    document.getElementById('password').addEventListener('blur', function() {
+      if (this.value.length >= 8) clearError('password');
+    });
+  </script>
+</body>
+</html>

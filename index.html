@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="./favicon-32x32.png">
+  <title>ForkYouToo — ALU Repository Explorer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cream: #F5F0E8;
+      --black: #1A1A1A;
+      --yellow: #F5C842;
+      --green: #B8F5C8;
+      --red: #FF6B6B;
+      --border: 2px solid var(--black);
+      --shadow: 4px 4px 0 var(--black);
+      --shadow-sm: 2px 2px 0 var(--black);
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--cream);
+    }
+
+    .loading-spinner, .loading-more {
+      text-align: center;
+      padding: 40px;
+      grid-column: 1/-1;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--black);
+      border-top-color: var(--yellow);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      color: white;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      max-width: 500px;
+      width: 90%;
+      padding: 32px;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .modal-header {
+      font-family: 'Space Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .modal-body {
+      margin-bottom: 24px;
+    }
+
+    .modal-body p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .github-input {
+      width: 100%;
+      height: 48px;
+      border: var(--border);
+      background: var(--cream);
+      padding: 0 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    .github-input:focus {
+      box-shadow: var(--shadow);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      height: 44px;
+      border: var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.1s;
+    }
+
+    .modal-btn.primary {
+      background: var(--black);
+      color: var(--yellow);
+    }
+
+    .modal-btn.secondary {
+      background: var(--cream);
+      color: var(--black);
+    }
+
+    .modal-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .github-status {
+      margin-top: 16px;
+      padding: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border: var(--border);
+      display: none;
+    }
+
+    .github-status.success {
+      background: var(--green);
+      color: #1a4a27;
+      display: block;
+    }
+
+    .github-status.error {
+      background: #ffe5e5;
+      color: var(--red);
+      display: block;
+    }
+
+    .topbar {
+      background: var(--cream);
+      border-bottom: var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+      cursor: pointer;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: var(--border);
+      padding: 6px 14px 6px 8px;
+      background: white;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .user-chip:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--yellow);
+      border: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .user-email {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .chevron {
+      margin-left: 4px;
+      font-size: 10px;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      min-width: 200px;
+      z-index: 100;
+      display: none;
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.1s;
+      border-bottom: 1px solid #eee;
+    }
+
+    .dropdown-item:hover {
+      background: var(--cream);
+    }
+
+    .dropdown-item.logout {
+      color: var(--red);
+      border-top: var(--border);
+    }
+
+    .hero {
+      background: var(--black);
+      padding: 40px 32px;
+      border-bottom: var(--border);
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: var(--yellow);
+      border: var(--border);
+      border-color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: 32px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      background: var(--yellow);
+      color: var(--black);
+      padding: 0 6px;
+    }
+
+    .hero p {
+      font-size: 14px;
+      color: #aaa;
+      max-width: 500px;
+      margin-bottom: 24px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 24px;
+    }
+
+    .stat {
+      background: #222;
+      border: 1px solid #444;
+      padding: 12px 20px;
+    }
+
+    .stat-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--yellow);
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    .search-section {
+      padding: 24px 32px;
+      border-bottom: var(--border);
+      background: var(--cream);
+      position: sticky;
+      top: 64px;
+      z-index: 99;
+    }
+
+    .search-bar {
+      display: flex;
+      max-width: 500px;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      flex: 1;
+      height: 48px;
+      border: var(--border);
+      border-right: none;
+      background: white;
+      padding: 0 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-btn {
+      height: 48px;
+      padding: 0 24px;
+      background: var(--yellow);
+      border: var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .filter-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #666;
+    }
+
+    .filter-tag {
+      padding: 6px 16px;
+      border: var(--border);
+      background: white;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .filter-tag.active {
+      background: var(--black);
+      color: var(--yellow);
+    }
+
+    .repos-section {
+      padding: 32px;
+      min-height: 400px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .repo-count {
+      border: var(--border);
+      padding: 4px 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--yellow);
+    }
+
+    .repo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+
+    .repo-card {
+      background: white;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      transition: transform 0.1s, box-shadow 0.1s;
+      animation: fadeInUp 0.3s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .repo-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      padding: 20px;
+      border-bottom: var(--border);
+      background: var(--cream);
+      cursor: pointer;
+    }
+
+    .repo-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+
+    .repo-owner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .owner-avatar {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--black);
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .owner-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .owner-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #666;
+    }
+
+    .repo-description {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .card-body {
+      padding: 16px 20px;
+    }
+
+    .topic-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .topic-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border: var(--border);
+      background: var(--cream);
+      text-transform: lowercase;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-top: var(--border);
+      border-bottom: var(--border);
+      margin-bottom: 16px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .stat-label-small {
+      font-size: 10px;
+      color: #777;
+      text-transform: uppercase;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .view-btn, .import-btn {
+      flex: 1;
+      height: 40px;
+      border: var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.1s;
+    }
+
+    .view-btn {
+      background: var(--black);
+      color: var(--yellow);
+    }
+
+    .import-btn {
+      background: var(--yellow);
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .view-btn:hover, .import-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 768px) {
+      .topbar, .search-section, .repos-section { padding: 16px; }
+      .hero { padding: 32px 20px; }
+      .hero h1 { font-size: 24px; }
+      .repo-grid { grid-template-columns: 1fr; }
+      .button-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo" onclick="window.location.href='/';">
+      <img src="./3D TEXT.jpg" alt="logo" width="40">
+      <span>ForkYouToo</span>
+    </div>
+    <div class="top-right">
+      <div class="user-chip" id="userChip">
+        <div class="user-avatar">👤</div>
+        <span class="user-email" id="userDisplay"></span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="dropdown-item" id="importsItem"><span>📦</span> My Imports</div>
+        <div class="dropdown-item" id="connectGithubItem"><span>🔗</span> Connect GitHub</div>
+        <div class="dropdown-item logout" id="logoutItem"><span>🚪</span> Sign Out</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub Connection Modal -->
+  <div class="modal" id="githubModal">
+    <div class="modal-content">
+      <div class="modal-header">Connect GitHub Account</div>
+      <div class="modal-body">
+        <p>To import repositories, you need to connect your GitHub account. Create a <strong>Personal Access Token</strong> with <code>repo</code> and <code>user</code> permissions.</p>
+        <input type="text" class="github-input" id="githubTokenInput" placeholder="Enter your GitHub Personal Access Token">
+        <div id="githubStatus" class="github-status"></div>
+      </div>
+      <div class="modal-buttons">
+        <button class="modal-btn secondary" onclick="closeGithubModal()">Cancel</button>
+        <button class="modal-btn primary" onclick="connectGitHub()">Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">ALU GitHub Explorer</div>
+      <h1>Discover ALU repos.<br><em>Learn from real projects.</em></h1>
+      <p>Browse real GitHub repositories from ALU students and alumni.</p>
+      <div class="hero-stats" id="heroStats">
+        <div class="stat"><div class="stat-number" id="totalRepos">--</div><div class="stat-label">Repos</div></div>
+        <div class="stat"><div class="stat-number" id="totalStars">--</div><div class="stat-label">Stars</div></div>
+        <div class="stat"><div class="stat-number" id="totalLanguages">--</div><div class="stat-label">Languages</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-section">
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search repos by name, description, or language...">
+      <button class="search-btn" id="searchBtn">SEARCH →</button>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Language:</span>
+      <button class="filter-tag active" data-language="all">All</button>
+      <button class="filter-tag" data-language="Python">Python</button>
+      <button class="filter-tag" data-language="JavaScript">JavaScript</button>
+      <button class="filter-tag" data-language="Java">Java</button>
+      <button class="filter-tag" data-language="TypeScript">TypeScript</button>
+      <button class="filter-tag" data-language="Rust">Rust</button>
+    </div>
+  </div>
+
+  <div class="repos-section">
+    <div class="section-header">
+      <div class="section-title">ALU Repositories</div>
+      <div class="repo-count" id="repoCount">0 repos</div>
+    </div>
+    <div class="repo-grid" id="repoGrid">
+      <div class="loading-spinner"><div class="spinner"></div><p>Loading repositories...</p></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://127.0.0.1:8000/api/alu-repos/';
+    const IMPORT_API_URL = 'http://127.0.0.1:8000/api/import/';
+    const CONNECT_GITHUB_URL = 'http://127.0.0.1:8000/api/connect-github/';
+    const MY_IMPORTS_URL = 'http://127.0.0.1:8000/api/imports/';
+
+    // ── State ──────────────────────────────────────────────
+    let allRepos = [];           // all repos fetched so far
+    let currentPage = 1;
+    let totalCount = 0;
+    let hasMore = true;
+    let isFetching = false;      // prevents duplicate in-flight requests
+    let currentLanguage = "all";
+    let currentSearch = "";
+    let observer = null;
+    let totalStarsAll = 0;
+    let allLanguages = new Set();
+
+    // ── Auth ───────────────────────────────────────────────
+    function checkAuth() {
+      if (!localStorage.getItem('access_token')) {
+        window.location.href = 'login.html';
+      }
+    }
+
+    function getUserDisplay() {
+      return localStorage.getItem('user_name') || localStorage.getItem('user_email') || 'User';
+    }
+
+    // ── GitHub modal ───────────────────────────────────────
+    function openGithubModal() {
+      document.getElementById('githubModal').classList.add('show');
+    }
+
+    function closeGithubModal() {
+      document.getElementById('githubModal').classList.remove('show');
+      document.getElementById('githubTokenInput').value = '';
+      const s = document.getElementById('githubStatus');
+      s.className = 'github-status';
+      s.style.display = 'none';
+    }
+
+    async function connectGitHub() {
+      const token = document.getElementById('githubTokenInput').value.trim();
+      if (!token) { showGithubStatus('Please enter your GitHub token', 'error'); return; }
+
+      showGithubStatus('Connecting to GitHub...', 'loading');
+
+      try {
+        const response = await fetch(CONNECT_GITHUB_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ github_token: token })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showGithubStatus(`✅ Connected as ${data.username}`, 'success');
+          localStorage.setItem('github_connected', 'true');
+          localStorage.setItem('github_username', data.username);
+          setTimeout(closeGithubModal, 1500);
+        } else {
+          showGithubStatus(`❌ ${data.error}`, 'error');
+        }
+      } catch (error) {
+        showGithubStatus('❌ Network error. Please try again.', 'error');
+      }
+    }
+
+    function showGithubStatus(message, type) {
+      const s = document.getElementById('githubStatus');
+      s.textContent = message;
+      s.className = 'github-status' + (type === 'success' ? ' success' : type === 'error' ? ' error' : '');
+      s.style.display = 'block';
+    }
+
+    // ── Imports ────────────────────────────────────────────
+    function viewImports() {
+      window.location.href = 'imports.html';
+    }
+
+    async function importRepo(owner, repo) {
+      if (!localStorage.getItem('github_connected')) {
+        if (confirm('You need to connect your GitHub account first. Would you like to connect now?')) {
+          openGithubModal();
+        }
+        return;
+      }
+
+      const newName = prompt('Name for your imported repo (leave blank to keep original):', repo);
+      if (newName === null) return;
+
+      const overlay = document.createElement('div');
+      overlay.className = 'loading-overlay';
+      overlay.innerHTML = '<div class="spinner"></div><p>Importing to your GitHub account...</p>';
+      document.body.appendChild(overlay);
+
+      try {
+        const res = await fetch(IMPORT_API_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            owner, repo,
+            new_name: newName || repo,
+            rename_project: true,
+            add_attribution: true
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.open(data.imported_repo.url, '_blank');
+          window.location.href = 'imports.html';
+        } else {
+          alert(`❌ Import failed: ${data.error}`);
+        }
+      } catch (e) {
+        alert('Network error. Please try again.');
+      } finally {
+        overlay.remove();
+      }
+    }
+
+    // ── Core fetch — fetches ONE page from the backend ────
+    async function fetchPage(page) {
+      if (isFetching) return;
+      isFetching = true;
+
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+
+      // Show spinner only on first load
+      if (page === 1) {
+        document.getElementById('repoGrid').innerHTML =
+          '<div class="loading-spinner"><div class="spinner"></div><p>Loading repositories...</p></div>';
+      }
+
+      try {
+        const res = await fetch(`${API_URL}?page=${page}&per_page=20`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+          localStorage.clear();
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const data = await res.json();
+        const newRepos = data.items || [];
+
+        // Append to running list
+        allRepos = [...allRepos, ...newRepos];
+        hasMore = data.has_more;
+        totalCount = data.total_count || allRepos.length;
+
+        // Update hero stats incrementally
+        newRepos.forEach(r => {
+          totalStarsAll += (r.stargazers_count || 0);
+          if (r.language) allLanguages.add(r.language);
+        });
+
+        document.getElementById('totalRepos').textContent = totalCount;
+        document.getElementById('totalStars').textContent = totalStarsAll;
+        document.getElementById('totalLanguages').textContent = allLanguages.size;
+
+        renderRepos(page === 1);
+
+      } catch (e) {
+        console.error('Fetch error:', e);
+        if (page === 1) {
+          document.getElementById('repoGrid').innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:60px;">
+              <p style="color: var(--red); margin-bottom: 16px;">Failed to load repositories</p>
+              <button onclick="resetAndFetch()" style="padding: 8px 24px; border: var(--border); background: var(--yellow); cursor: pointer;">Retry</button>
+            </div>`;
+        }
+      } finally {
+        isFetching = false;
+      }
+    }
+
+    function resetAndFetch() {
+      allRepos = [];
+      currentPage = 1;
+      hasMore = true;
+      totalStarsAll = 0;
+      allLanguages = new Set();
+      fetchPage(1);
+    }
+
+    // ── Render only the repos we have so far ──────────────
+    function getFilteredRepos() {
+      return allRepos.filter(repo => {
+        if (currentLanguage !== "all" && repo.language !== currentLanguage) return false;
+        if (currentSearch) {
+          const s = currentSearch.toLowerCase();
+          return (repo.name || '').toLowerCase().includes(s) ||
+                 (repo.description || '').toLowerCase().includes(s) ||
+                 (repo.language || '').toLowerCase().includes(s);
+        }
+        return true;
+      });
+    }
+
+    function renderRepos(replace = false) {
+      const filtered = getFilteredRepos();
+      document.getElementById('repoCount').textContent = `${filtered.length} repos`;
+
+      const grid = document.getElementById('repoGrid');
+
+      if (filtered.length === 0 && !hasMore) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;">No repositories found</div>`;
+        return;
+      }
+
+      // Build cards HTML
+      const cardsHtml = filtered.map(repo => `
+        <div class="repo-card">
+          <div class="card-header" onclick="window.open('${repo.html_url}', '_blank')">
+            <div class="repo-name">${escapeHtml(repo.name)}</div>
+            <div class="repo-owner">
+              ${repo.owner?.avatar_url ? `<div class="owner-avatar"><img src="${repo.owner.avatar_url}" loading="lazy"></div>` : ''}
+              <div class="owner-name">${escapeHtml(repo.owner?.login || 'unknown')}</div>
+            </div>
+            <div class="repo-description">${escapeHtml((repo.description || 'No description').substring(0, 100))}${(repo.description || '').length > 100 ? '...' : ''}</div>
+          </div>
+          <div class="card-body">
+            <div class="topic-row">
+              ${(repo.topics || []).slice(0, 2).map(t => `<div class="topic-tag">#${escapeHtml(t)}</div>`).join('')}
+              <div class="topic-tag" style="background:var(--yellow);">${escapeHtml(repo.language || 'Unknown')}</div>
+            </div>
+            <div class="stats-row">
+              <div class="stat-item"><div class="stat-value">★${repo.stargazers_count || 0}</div><div class="stat-label-small">Stars</div></div>
+              <div class="stat-item"><div class="stat-value">${repo.forks_count || 0}</div><div class="stat-label-small">Forks</div></div>
+            </div>
+            <div class="button-row">
+              <button class="view-btn" onclick="event.stopPropagation(); window.open('${repo.html_url}', '_blank')">View →</button>
+              <button class="import-btn" onclick="event.stopPropagation(); importRepo('${repo.owner.login}', '${repo.name}')">📦 Import</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      if (replace) {
+        grid.innerHTML = cardsHtml;
+      } else {
+        // Remove old sentinel before appending new cards
+        const oldSentinel = document.getElementById('load-more-sentinel');
+        if (oldSentinel) oldSentinel.remove();
+        grid.insertAdjacentHTML('beforeend', cardsHtml);
+      }
+
+      // Add sentinel / end message
+      if (hasMore) {
+        const sentinel = document.createElement('div');
+        sentinel.id = 'load-more-sentinel';
+        sentinel.className = 'loading-more';
+        sentinel.innerHTML = '<div class="spinner"></div><p>Loading more repos...</p>';
+        grid.appendChild(sentinel);
+        setupIntersectionObserver();
+      } else if (allRepos.length > 20) {
+        const endMsg = document.createElement('div');
+        endMsg.style.cssText = 'grid-column:1/-1;text-align:center;padding:40px;font-family:Space Mono,monospace;font-size:12px;color:#666;';
+        endMsg.textContent = '✓ All repositories loaded';
+        grid.appendChild(endMsg);
+      }
+    }
+
+    // ── Infinite scroll — triggers next page fetch ────────
+    function setupIntersectionObserver() {
+      if (observer) observer.disconnect();
+      const sentinel = document.getElementById('load-more-sentinel');
+      if (!sentinel) return;
+
+      observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !isFetching && hasMore) {
+          currentPage++;
+          fetchPage(currentPage);
+        }
+      }, { threshold: 0.1 });
+
+      observer.observe(sentinel);
+    }
+
+    // ── Search & filters reset to page 1 of loaded data ──
+    function applyFilters() {
+      renderRepos(true);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ── Setup ──────────────────────────────────────────────
+    function setupFilters() {
+      document.querySelectorAll('.filter-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+          document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+          tag.classList.add('active');
+          currentLanguage = tag.dataset.language;
+          applyFilters();
+        });
+      });
+    }
+
+    function setupSearch() {
+      const input = document.getElementById('searchInput');
+      const btn = document.getElementById('searchBtn');
+      const perform = () => {
+        currentSearch = input.value.trim();
+        applyFilters();
+      };
+      btn.addEventListener('click', perform);
+      input.addEventListener('keypress', e => e.key === 'Enter' && perform());
+    }
+
+    function setupDropdown() {
+      const chip = document.getElementById('userChip');
+      const menu = document.getElementById('dropdownMenu');
+      chip.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('show'); });
+      document.addEventListener('click', () => menu.classList.remove('show'));
+    }
+
+    document.getElementById('userDisplay').textContent = getUserDisplay();
+    checkAuth();
+    setupDropdown();
+    document.getElementById('logoutItem').addEventListener('click', () => { localStorage.clear(); window.location.href = 'login.html'; });
+    document.getElementById('importsItem').addEventListener('click', () => viewImports());
+    document.getElementById('connectGithubItem').addEventListener('click', () => openGithubModal());
+    setupFilters();
+    setupSearch();
+
+    // Kick off — fetches only the first 20 repos immediately
+    fetchPage(1);
+  </script>
+</body>
+</html>

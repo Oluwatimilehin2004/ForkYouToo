@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="./favicon-32x32.png">
+  <title>ForkYouToo — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cream: #F5F0E8;
+      --black: #1A1A1A;
+      --yellow: #F5C842;
+      --green: #B8F5C8;
+      --red: #FF6B6B;
+      --border: 2px solid var(--black);
+      --shadow: 4px 4px 0 var(--black);
+      --shadow-lg: 6px 6px 0 var(--black);
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Container */
+    .login-container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 40px 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--cream);
+      border: var(--border);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    /* Left Panel - Hero */
+    .hero-panel {
+      background: var(--black);
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .logo-box {
+      width: 30px;
+      height: 30px;
+      background: var(--yellow);
+      border: var(--border);
+      border-color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--black);
+      position: relative;
+    }
+
+    .logo-box img{
+        width: 100%;
+        height: 100%;
+    }
+
+    .logo-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: var(--yellow);
+      border: var(--border);
+      border-color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--black);
+      width: fit-content;
+    }
+
+    .hero-panel h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: 32px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .hero-panel h1 em {
+      font-style: normal;
+      background: var(--yellow);
+      color: var(--black);
+      padding: 0 6px;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      color: #aaa;
+      line-height: 1.6;
+      margin-bottom: 40px;
+      max-width: 380px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .feature-card {
+      border: 1px solid #333;
+      padding: 14px 16px;
+      background: #222;
+    }
+
+    .feature-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .feature-desc {
+      font-size: 12px;
+      color: #888;
+      line-height: 1.4;
+    }
+
+    /* Right Panel - Login Form */
+    .form-panel {
+      background: var(--cream);
+      padding: 48px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .login-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .login-sub {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* Form Fields */
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    .field-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      display: block;
+      margin-bottom: 8px;
+      color: var(--black);
+    }
+
+    .field-input {
+      width: 100%;
+      height: 48px;
+      border: var(--border);
+      background: white;
+      padding: 0 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--black);
+      outline: none;
+      transition: box-shadow 0.15s;
+    }
+
+    .field-input:focus {
+      box-shadow: var(--shadow);
+      background: var(--cream);
+    }
+
+    .field-input.error {
+      border-color: var(--red);
+      background: #fff5f5;
+    }
+
+    .field-error {
+      font-size: 11px;
+      color: var(--red);
+      font-weight: 700;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .field-error.visible {
+      display: block;
+    }
+
+    /* Password with toggle */
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap .field-input {
+      padding-right: 48px;
+    }
+
+    .pw-toggle {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-left: var(--border);
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pw-toggle:hover {
+      background: var(--yellow);
+    }
+
+    /* Login Button */
+    .login-btn {
+      width: 100%;
+      height: 52px;
+      background: var(--black);
+      border: var(--border);
+      color: var(--yellow);
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: transform 0.1s, box-shadow 0.1s;
+      margin-top: 8px;
+    }
+
+    .login-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #444;
+      border-top-color: var(--yellow);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .alu-note {
+      background: var(--yellow);
+      border: var(--border);
+      padding: 14px 16px;
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 20px 0;
+    }
+
+    .alu-note strong {
+      color: var(--black);
+      font-weight: 700;
+    }
+
+    hr {
+      border: none;
+      border-top: var(--border);
+      margin: 20px 0;
+    }
+
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--black);
+    }
+
+    .check-icon {
+      width: 22px;
+      height: 22px;
+      background: var(--green);
+      border: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+    }
+
+    .signup-link a {
+      color: var(--black);
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .signup-link a:hover {
+      color: #444;
+    }
+
+    .success-msg {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--green);
+      border: var(--border);
+      padding: 14px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a4a27;
+      margin-top: 20px;
+    }
+
+    .error-msg {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffe5e5;
+      border: var(--border);
+      border-color: var(--red);
+      padding: 14px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      margin-top: 20px;
+    }
+
+    @media (max-width: 860px) {
+      .login-container {
+        grid-template-columns: 1fr;
+        margin: 20px;
+      }
+      .hero-panel {
+        padding: 32px 24px;
+      }
+      .form-panel {
+        padding: 40px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <!-- Left Hero Panel -->
+    <div class="hero-panel">
+      <div class="logo-badge">
+        <div class="logo-box">
+            <img src="./3D TEXT.jpg" alt="logo">
+        </div>
+        <span class="logo-text">ForkYouToo</span>
+      </div>
+      <div class="hero-tag">For ALU Students Only</div>
+      <h1>Find your seniors' work.<br><em>Make it yours.</em></h1>
+      <p class="hero-sub">ForkYouToo connects to GitHub and pulls real projects from ALU students — so you can explore, understand, and build on top of what came before you.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-label">Browse</div>
+          <div class="feature-desc">Real repos from ALU students on GitHub</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-label">Explain</div>
+          <div class="feature-desc">AI breaks down any codebase in plain English</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-label">Compare</div>
+          <div class="feature-desc">Pick the best project for your task</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-label">Import</div>
+          <div class="feature-desc">Fork and rename repos in one click</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Form Panel -->
+    <div class="form-panel">
+      <div class="login-card">
+        <h2 class="login-title">Welcome back</h2>
+        <p class="login-sub">Sign in with your username and password</p>
+
+        <form id="loginForm">
+          <div class="field-group">
+            <label class="field-label" for="username">Username</label>
+            <input class="field-input" type="text" id="username" name="username" placeholder="e.g., amara-kone">
+            <span class="field-error" id="err-username"></span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="password">Password</label>
+            <div class="password-wrap">
+              <input class="field-input" type="password" id="password" name="password" placeholder="Enter your password">
+              <button type="button" class="pw-toggle" id="pwToggle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <span class="field-error" id="err-password"></span>
+          </div>
+
+          <div class="alu-note">
+            <strong>🔐 ALU email required for registration</strong><br>
+            You must use <strong>@alustudent.com</strong> or <strong>@alueducation.com</strong> when signing up.
+          </div>
+
+          <button type="submit" class="login-btn" id="loginBtn">
+            <span id="btnText">Sign in</span>
+            <div class="btn-spinner" id="btnSpinner" style="display: none;"></div>
+          </button>
+
+          <div id="apiResponse" style="display: none;"></div>
+        </form>
+
+        <hr>
+
+        <ul class="checklist">
+          <li><div class="check-icon">✓</div>Your GitHub is linked automatically</li>
+          <li><div class="check-icon">✓</div>Your cohort is detected from your email</li>
+          <li><div class="check-icon">✓</div>No manual setup needed</li>
+        </ul>
+
+        <div class="signup-link">
+          Don't have an account? <a href="signup.html">Create one →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // API Endpoint
+    const API_LOGIN_URL = 'http://127.0.0.1:8000/api/login/';
+
+    // Password toggle
+    const pwInput = document.getElementById('password');
+    const pwToggle = document.getElementById('pwToggle');
+    let pwVisible = false;
+
+    pwToggle.addEventListener('click', () => {
+      pwVisible = !pwVisible;
+      pwInput.type = pwVisible ? 'text' : 'password';
+      pwToggle.innerHTML = pwVisible ? 
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>' :
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    });
+
+    // Validation helpers
+    function showError(fieldId, msg) {
+      const input = document.getElementById(fieldId);
+      const err = document.getElementById(`err-${fieldId}`);
+      if (input) input.classList.add('error');
+      if (err) {
+        err.textContent = msg;
+        err.classList.add('visible');
+      }
+    }
+
+    function clearError(fieldId) {
+      const input = document.getElementById(fieldId);
+      const err = document.getElementById(`err-${fieldId}`);
+      if (input) input.classList.remove('error');
+      if (err) err.classList.remove('visible');
+    }
+
+    function clearAllErrors() {
+      ['username', 'password'].forEach(clearError);
+    }
+
+    // Show API response message
+    function showMessage(message, isError = false) {
+      const responseDiv = document.getElementById('apiResponse');
+      responseDiv.style.display = 'block';
+      responseDiv.className = isError ? 'error-msg' : 'success-msg';
+      responseDiv.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          ${isError ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' : '<polyline points="20 6 9 17 4 12"/>'}
+        </svg>
+        ${message}
+      `;
+      
+      if (isError) {
+        setTimeout(() => {
+          responseDiv.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    // Function to set auth token in localStorage
+    function setAuthTokens(accessToken, refreshToken) {
+      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('refresh_token', refreshToken);
+    }
+
+    // Form submit
+    const form = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      // Clear previous errors and messages
+      clearAllErrors();
+      const responseDiv = document.getElementById('apiResponse');
+      responseDiv.style.display = 'none';
+
+      // --- FRONTEND VALIDATION ---
+      let valid = true;
+
+      if (!username) {
+        showError('username', 'Username is required');
+        valid = false;
+      } else if (username.length < 3) {
+        showError('username', 'Username must be at least 3 characters');
+        valid = false;
+      }
+
+      if (!password) {
+        showError('password', 'Password is required');
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      // --- API CALL ---
+      loginBtn.disabled = true;
+      btnText.style.display = 'none';
+      btnSpinner.style.display = 'block';
+
+      try {
+        // Payload with username and password
+        const loginData = {
+          username: username,
+          password: password
+        };
+
+        console.log('Sending login data:', { username: loginData.username });
+
+        const response = await fetch(API_LOGIN_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(loginData)
+        });
+
+        // Check if response is JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          console.error("Non-JSON response:", text.substring(0, 500));
+          throw new Error("Server returned an error. Please try again.");
+        }
+
+        const data = await response.json();
+        console.log('Server response:', data);
+
+        if (response.ok) {
+          // Login successful - Store JWT tokens
+          if (data.access) {
+            localStorage.setItem('access_token', data.access);
+          }
+          if (data.refresh) {
+            localStorage.setItem('refresh_token', data.refresh);
+          }
+          if (data.user) {
+            localStorage.setItem('user_email', data.user.email || '');
+            localStorage.setItem('user_name', data.user.username || username);
+          }
+          
+          // Also store for backward compatibility
+          if (data.access) {
+            localStorage.setItem('rk_token', data.access);
+          }
+          
+          // Show success message
+          showMessage(`Welcome back, ${username}! Redirecting...`, false);
+          
+          // Disable form
+          form.style.opacity = '0.6';
+          form.style.pointerEvents = 'none';
+          
+          // Redirect to homepage after 1.5 seconds
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+          
+        } else {
+          // Login failed
+          let errorMessage = data.error || data.message || 'Invalid username or password. Please try again.';
+          showMessage(errorMessage, true);
+        }
+        
+      } catch (error) {
+        console.error('Login error:', error);
+        showMessage('Network error. Please check your connection and try again.', true);
+        
+      } finally {
+        // Re-enable the login button
+        loginBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnSpinner.style.display = 'none';
+      }
+    });
+
+    // Live validation on blur
+    document.getElementById('username').addEventListener('blur', function() {
+      if (this.value && this.value.length >= 3) {
+        clearError('username');
+      }
+    });
+    
+    document.getElementById('password').addEventListener('blur', function() {
+      if (this.value) {
+        clearError('password');
+      }
+    });
+
+    // Check if user is already logged in and redirect
+    const accessToken = localStorage.getItem('access_token');
+    if (accessToken) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
