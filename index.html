@@ -716,10 +716,13 @@
   </div>
 
   <script>
-    const API_URL = 'http://127.0.0.1:8000/api/alu-repos/';
-    const IMPORT_API_URL = 'http://127.0.0.1:8000/api/import/';
-    const CONNECT_GITHUB_URL = 'http://127.0.0.1:8000/api/connect-github/';
-    const MY_IMPORTS_URL = 'http://127.0.0.1:8000/api/imports/';
+    const BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+      ? 'http://127.0.0.1:8000'
+      : 'https://www.wwwpapa.tech';
+    const API_URL = `${BASE_URL}/api/alu-repos/`;
+    const IMPORT_API_URL = `${BASE_URL}/api/import/`;
+    const CONNECT_GITHUB_URL = `${BASE_URL}/api/connect-github/`;
+    const MY_IMPORTS_URL = `${BASE_URL}/api/imports/`;
 
     // ── State ──────────────────────────────────────────────
     let allRepos = [];           // all repos fetched so far

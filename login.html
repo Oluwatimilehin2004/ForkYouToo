@@ -509,7 +509,10 @@
 
   <script>
     // API Endpoint
-    const API_LOGIN_URL = 'http://127.0.0.1:8000/api/login/';
+    const BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+      ? 'http://127.0.0.1:8000'
+      : 'https://www.wwwpapa.tech';
+    const API_LOGIN_URL = `${BASE_URL}/api/login/`;
 
     // Password toggle
     const pwInput = document.getElementById('password');
