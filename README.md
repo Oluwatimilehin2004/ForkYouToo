@@ -2,9 +2,9 @@
 
 > Discover, explore, and fork real GitHub repositories from ALU students and alumni — all in one place.
 
-[![Demo Video](https://img.shields.io/badge/Watch-Demo%20Video-red?style=for-the-badge&logo=youtube)](https://your-video-link-here)
+[![Demo Video](https://img.shields.io/badge/Watch-Demo%20Video-red?style=for-the-badge&logo=youtube)](https://youtu.be/45m39Zc_ReQ?si=FyVssxD1o43ChWlp)
 
-[![Live App](https://img.shields.io/badge/Live-wwwpapa.tech-blue?style=for-the-badge&logo=globe)](https://wwwpapa.tech)
+[![Live App](https://img.shields.io/badge/Live-wwwpapa.tech-blue?style=for-the-badge&logo=globe)](https://www.wwwpapa.tech)
 
 ---
 
@@ -14,7 +14,7 @@ This frontend talks to the ForkYouToo Django backend API.
 Backend repo: https://github.com/Oluwatimilehin2004/ForkYouToo-Backend
 
 By default the API URLs point to `http://127.0.0.1:8000` for local development.
-For production, it was updated to the API URL constants at the top of each HTML file to point to your load balancer address(https://wwwpapa.tech).
+For production, it was updated to the API URL constants at the top of each HTML file to point to your load balancer address(https://www.wwwpapa.tech).
 
 ---
 
